@@ -1,3 +1,6 @@
 [submodule "third_party/SPIRV-Tools"]
 	path = third_party/SPIRV-Tools
 	url = https://github.com/ej20002015/SPIRV-Tools.git
+[submodule "third_party/glslang"]
+	path = third_party/glslang
+	url = https://github.com/ej20002015/glslang.git
