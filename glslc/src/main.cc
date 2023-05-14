@@ -67,13 +67,15 @@ Options:
   -fentry-point=<name>
                     Specify the entry point name for HLSL compilation, for
                     all subsequent source files.  Default is "main".
+  -fhlsl-16bit-types
+                    Enable 16-bit type support for HLSL.
   -fhlsl_functionality1, -fhlsl-functionality1
                     Enable extension SPV_GOOGLE_hlsl_functionality1 for HLSL
                     compilation.
-  -finvert-y        Invert position.Y output in vertex shader.
   -fhlsl-iomap      Use HLSL IO mappings for bindings.
   -fhlsl-offsets    Use HLSL offset rules for packing members of blocks.
                     Affects only GLSL.  HLSL rules are always used for HLSL.
+  -finvert-y        Invert position.Y output in vertex shader.
   -flimit=<settings>
                     Specify resource limits. Each limit is specified by a limit
                     name followed by an integer value.  Tokens should be
@@ -85,6 +87,9 @@ Options:
                     a NaN operand, the other operand is returned. Similarly,
                     the clamp builtin will favour the non-NaN operands, as if
                     clamp were implemented as a composition of max and min.
+  -fpreserve-bindings
+                    Preserve all binding declarations, even if those bindings
+                    are not used.
   -fresource-set-binding [stage] <reg0> <set0> <binding0>
                         [<reg1> <set1> <binding1>...]
                     Explicitly sets the descriptor set and binding for
@@ -159,6 +164,7 @@ Options:
                         vulkan1.0       # The default
                         vulkan1.1
                         vulkan1.2
+                        vulkan1.3
                         vulkan          # Same as vulkan1.0
                         opengl4.5
                         opengl          # Same as opengl4.5
@@ -169,8 +175,9 @@ Options:
                     For example, default for vulkan1.0 is spv1.0, and
                     the default for vulkan1.1 is spv1.3,
                     the default for vulkan1.2 is spv1.5.
+                    the default for vulkan1.3 is spv1.6.
                     Values are:
-                        spv1.0, spv1.1, spv1.2, spv1.3, spv1.4, spv1.5
+                        spv1.0, spv1.1, spv1.2, spv1.3, spv1.4, spv1.5, spv1.6
   --version         Display compiler version information.
   -w                Suppresses all warning messages.
   -Werror           Treat all warnings as errors.
@@ -320,10 +327,14 @@ int main(int argc, char** argv) {
     } else if (arg == "-fhlsl_functionality1" ||
                arg == "-fhlsl-functionality1") {
       compiler.options().SetHlslFunctionality1(true);
+    } else if (arg == "-fhlsl-16bit-types") {
+      compiler.options().SetHlsl16BitTypes(true);
     } else if (arg == "-finvert-y") {
       compiler.options().SetInvertY(true);
     } else if (arg == "-fnan-clamp") {
       compiler.options().SetNanClamp(true);
+    } else if (arg.starts_with("-fpreserve-bindings")) {
+      compiler.options().SetPreserveBindings(true);
     } else if (((u_kind = shaderc_uniform_kind_image),
                 (arg == "-fimage-binding-base")) ||
                ((u_kind = shaderc_uniform_kind_texture),
@@ -438,6 +449,9 @@ int main(int argc, char** argv) {
       } else if (target_env_str == "vulkan1.2") {
         target_env = shaderc_target_env_vulkan;
         version = shaderc_env_version_vulkan_1_2;
+      } else if (target_env_str == "vulkan1.3") {
+        target_env = shaderc_target_env_vulkan;
+        version = shaderc_env_version_vulkan_1_3;
       } else if (target_env_str == "opengl") {
         target_env = shaderc_target_env_opengl;
       } else if (target_env_str == "opengl4.5") {
@@ -470,6 +484,8 @@ int main(int argc, char** argv) {
         ver = shaderc_spirv_version_1_4;
       } else if (ver_str == "spv1.5") {
         ver = shaderc_spirv_version_1_5;
+      } else if (ver_str == "spv1.6") {
+        ver = shaderc_spirv_version_1_6;
       } else {
         std::cerr << "glslc: error: invalid value '" << ver_str
                   << "' in '--target-spv=" << ver_str << "'" << std::endl;

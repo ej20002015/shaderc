@@ -27,7 +27,7 @@ import sys
 from glslc_test_framework import GlslCTest
 from builtins import bytes
 
-GLSLANG_GENERATOR_VERSION=10
+GLSLANG_GENERATOR_VERSION=11
 SHADERC_GENERATOR_NUMBER=13
 SHADERC_GENERATOR_WORD=(SHADERC_GENERATOR_NUMBER << 16) + GLSLANG_GENERATOR_VERSION
 ASSEMBLER_GENERATOR_WORD=(7<<16)
@@ -307,6 +307,22 @@ class ValidObjectFile1_5(SuccessfulReturn, CorrectObjectFilePreamble):
             success, message = self.verify_object_file_preamble(
                 os.path.join(status.directory, object_filename),
                 0x10500)
+            if not success:
+                return False, message
+        return True, ''
+
+
+class ValidObjectFile1_6(SuccessfulReturn, CorrectObjectFilePreamble):
+    """Mixin class for checking that every input file generates a valid SPIR-V 1.6
+    object file following the object file naming rule, and there is no output on
+    stdout/stderr."""
+
+    def check_object_file_preamble(self, status):
+        for input_filename in status.input_filenames:
+            object_filename = get_object_filename(input_filename)
+            success, message = self.verify_object_file_preamble(
+                os.path.join(status.directory, object_filename),
+                0x10600)
             if not success:
                 return False, message
         return True, ''

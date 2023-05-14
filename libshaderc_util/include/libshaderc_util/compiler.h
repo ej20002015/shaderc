@@ -85,6 +85,7 @@ class Compiler {
     Vulkan_1_0 = ((1 << 22)),              // Vulkan 1.0
     Vulkan_1_1 = ((1 << 22) | (1 << 12)),  // Vulkan 1.1
     Vulkan_1_2 = ((1 << 22) | (2 << 12)),  // Vulkan 1.2
+    Vulkan_1_3 = ((1 << 22) | (3 << 12)),  // Vulkan 1.2
     // For OpenGL, use the numbering from #version in shaders.
     OpenGL_4_5 = 450,
   };
@@ -97,6 +98,7 @@ class Compiler {
     v1_3 = 0x010300u,
     v1_4 = 0x010400u,
     v1_5 = 0x010500u,
+    v1_6 = 0x010600u,
   };
 
   enum class OutputType {
@@ -204,10 +206,12 @@ class Compiler {
         auto_combined_image_sampler_(false),
         auto_binding_base_(),
         auto_map_locations_(false),
+        preserve_bindings_(false),
         hlsl_iomap_(false),
         hlsl_offsets_(false),
         hlsl_legalization_enabled_(true),
         hlsl_functionality1_enabled_(false),
+        hlsl_16bit_types_enabled_(false),
         invert_y_enabled_(false),
         nan_clamp_(false),
         hlsl_explicit_bindings_() {}
@@ -225,6 +229,9 @@ class Compiler {
 
   // Enables or disables extension SPV_GOOGLE_hlsl_functionality1
   void EnableHlslFunctionality1(bool enable);
+
+  // Enables or disables HLSL 16-bit types.
+  void EnableHlsl16BitTypes(bool enable);
 
   // Enables or disables invert position.Y output in vertex shader.
   void EnableInvertY(bool enable);
@@ -299,6 +306,12 @@ class Compiler {
   void SetAutoBindingBaseForStage(Stage stage, UniformKind kind,
                                   uint32_t base) {
     auto_binding_base_[static_cast<int>(stage)][static_cast<int>(kind)] = base;
+  }
+
+  // Sets whether the compiler should preserve all bindings, even when those
+  // bindings are not used.
+  void SetPreserveBindings(bool preserve_bindings) {
+    preserve_bindings_ = preserve_bindings;
   }
 
   // Sets whether the compiler automatically assigns locations to
@@ -512,6 +525,9 @@ class Compiler {
   // have explicit locations.
   bool auto_map_locations_;
 
+  // True if the compiler should preserve all bindings, even when unused.
+  bool preserve_bindings_;
+
   // True if the compiler should use HLSL IO mapping rules when compiling HLSL.
   bool hlsl_iomap_;
 
@@ -525,6 +541,9 @@ class Compiler {
 
   // True if the compiler should support extension SPV_GOOGLE_hlsl_functionality1.
   bool hlsl_functionality1_enabled_;
+
+  // True if the compiler should support 16-bit HLSL types.
+  bool hlsl_16bit_types_enabled_;
 
   // True if the compiler should invert position.Y output in vertex shader.
   bool invert_y_enabled_;

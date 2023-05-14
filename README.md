@@ -42,7 +42,7 @@ Shaderc has been shipping in the
 [Android NDK](https://developer.android.com/ndk/index.html) since version r12b.
 (The NDK build uses sources from https://android.googlesource.com/platform/external/shaderc/.
 Those repos are downstream from GitHub.)
-We currently require r18b.
+We currently require r21d.
 
 For licensing terms, please see the [`LICENSE`](LICENSE) file.  If interested in
 contributing to this project, please see [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -96,7 +96,6 @@ See Glslang's `ENABLE_HLSL` CMake setting.)
 git clone https://github.com/google/shaderc $SOURCE_DIR
 cd $SOURCE_DIR
 ./utils/git-sync-deps
-cd $SOURCE_DIR/
 ```
 
 **Note:** The [known-good](https://github.com/google/shaderc/tree/known-good)
@@ -163,17 +162,9 @@ API in your project.
 For building, testing, and profiling Shaderc, the following tools should be
 installed regardless of your OS:
 
-- [CMake](http://www.cmake.org/): for generating compilation targets.
+- [CMake](http://www.cmake.org/) 3.14 or later: for generating compilation targets.
+    - Shaderc is tested with cmake 3.17.2
 - [Python 3](http://www.python.org/): for utility scripts and running the test suite.
-
-On Linux, the following tools should be installed:
-
-- [`gcov`](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html): for testing code
-    coverage, provided by the `gcc` package on Ubuntu.
-- [`lcov`](http://ltp.sourceforge.net/coverage/lcov.php): a graphical frontend
-    for `gcov`, provided by the `lcov` package on Ubuntu.
-- [`genhtml`](http://linux.die.net/man/1/genhtml): for creating reports in html
-    format from `lcov` output, provided by the `lcov` package on Ubuntu.
 
 On Linux, if cross compiling to Windows:
 - [`mingw`](http://www.mingw.org): A GCC-based cross compiler targeting Windows
@@ -181,7 +172,7 @@ On Linux, if cross compiling to Windows:
 
 On Windows, the following tools should be installed and available on your path:
 
-- Visual Studio 2015 or later. Previous versions of Visual Studio may work but
+- Visual Studio 2017 or later. Previous versions of Visual Studio may work but
   are untested and unsupported.
 - Git - including the associated tools, Bash, `diff`.
 
@@ -225,20 +216,6 @@ test.vert
 We track bugs using GitHub -- click on the "Issues" button on
 [the project's GitHub page](https://github.com/google/shaderc).
 
-## Test coverage
-
-On Linux, you can obtain test coverage as follows:
-
-```sh
-cd $BUILD_DIR
-cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_COVERAGE=ON $SOURCE_DIR
-ninja
-ninja report-coverage
-```
-
-Then the coverage report can be found under the `$BUILD_DIR/coverage-report`
-directory.
-
 ## Bindings
 
 Bindings are maintained by third parties, may contain content
@@ -249,6 +226,7 @@ older versions of Shaderc and its dependencies.
 * **Rust:** [shaderc-rs][shaderc-rs]
 * **Go:** [gshaderc][gshaderc]
 * **.NET:** [shaderc.net][shadercdotnet]
+* **Common Lisp:** [shadercl][shaderccommonlisp]
 
 [khr-glslang]: https://github.com/KhronosGroup/glslang
 [spirv-tools]: https://github.com/KhronosGroup/SPIRV-Tools
@@ -259,3 +237,4 @@ older versions of Shaderc and its dependencies.
 [dawn]: https://dawn.googlesource.com/dawn
 [gshaderc]: https://github.com/celer/gshaderc
 [shadercdotnet]: https://github.com/jpbruyere/shaderc.net
+[shaderccommonlisp]: https://github.com/JolifantoBambla/shadercl
